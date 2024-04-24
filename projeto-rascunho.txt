@@ -1,0 +1,437 @@
+void parques() {
+
+    char leituraParque[STRING_PADRAO];
+
+    char nome[STRING_PADRAO];
+    int capacidadeMax;
+    float custo1;
+    float custo2;
+    float custo3;
+
+    fgets(leituraParque, sizeof(leituraParque), stdin);
+
+    if (leituraParque[strlen(leituraParque) - UM] == STRING_ENTER) {
+
+        leituraParque[strlen(leituraParque) - UM] = STRING_NULA;
+    }
+
+    if (strlen(leituraParque) == NULO) {
+
+        mostraParquesSistema();
+    }
+
+    else {
+
+        int numeroParques = numeroParquesSistema(parquesNoSistema);
+
+        sscanf(leituraParque, "%s %d %f %f %f", nome, &capacidadeMax, &custo1, &custo2, &custo3);
+
+        if (eParqueNovo(parquesNoSistema, nome) == FALSE) {
+
+            printf("parking already exists.\n");
+
+        } else if (eCapacidadeValida(capacidadeMax) == FALSE) {
+
+            printf("invalid capacity.\n");
+
+        } else if (eCustoValido(custo1, custo2, custo3) == FALSE) {
+
+            printf("invalid cost.\n");
+
+        } else if (eParqueValido(numeroParques + UM) == FALSE) {
+
+            printf("too many parks.\n");
+
+        } else {
+
+            adicionaParque(nome, capacidadeMax, custo1, custo2, custo3);
+        }
+    }
+}
+
+void entradas() {
+
+    char leituraEntrada[STRING_PADRAO];
+
+    char nomeParque[STRING_PADRAO];
+    char matricula;
+    char data[STRING_PADRAO];
+    char horas[STRING_PADRAO];
+
+    int dia;
+    int mes;
+    int ano;
+
+    int hora;
+    int minutos;
+
+    fgets(leituraEntrada, sizeof(leituraEntrada), stdin);
+
+    sscanf(leituraEntrada, "%s %s %s %s", nomeParque, matricula, data, horas);
+    sscanf(data, "%d-%d-%d", &dia, &mes, &ano);
+    sscanf(horas, "%d:%d", &hora, &minutos);
+
+    Parque* parqueDeEntrada = devolveParqueCorrespondente(parquesNoSistema, nomeParque);
+
+    if (eParqueNovo(parquesNoSistema, nomeParque) == TRUE) {
+
+        printf("no such parking.\n");
+
+    } else if (eParqueCheio(parqueDeEntrada -> parque.lugaresDisponiveis) == TRUE) {
+
+        printf("parking is full.\n");
+
+    } else if (eMatriculaValida(matricula) == FALSE) {
+
+        printf("invalid licence plate.\n");
+
+    } else if (eEntradaValida())
+}
+
+Bool eParqueNovo(Parque* primeiroParque, char* nomeParque) {
+
+    Parque* parqueAtual = primeiroParque;
+
+    while (parqueAtual != NULL) {
+
+        if (strcmp(parqueAtual -> parque.nome, nomeParque) == STRCMP_TRUE) {
+
+            return FALSE;
+        }
+
+        parqueAtual = parqueAtual -> proxParque;
+    }
+
+    return TRUE;
+} 
+
+Bool eCapacidadeValida(int capacidade) {
+
+    return capacidade > CAP_INVALIDA;
+}
+
+Bool eCustoValido(float custo1, float custo2, float custo3) {
+
+    return (custo1 > CUSTO_INVALIDO && custo1 < custo2 && custo2 < custo3);
+}
+
+Bool eParqueValido(int numParques) {
+
+    return numParques <= MAX_NUM_PARQUES;
+}
+
+Bool eParqueCheio(int lugaresDisponiveis) {
+
+    return lugaresDisponiveis == NULO;
+}
+
+Bool eMatriculaValida(char* matricula) {
+
+    int tamanhoMatricula;
+
+    int numeroDigitosMatricula;
+    int numeroAlphasMatricula;
+
+    numeroDigitosMatricula = numeroDigitosVetor(matricula);
+    numeroAlphasMatricula = numeroAlphasVetor(matricula);
+
+    tamanhoMatricula = strlen(matricula);
+
+    if (tamanhoMatricula != TAMANHO_MATRICULA) return FALSE;
+
+    if (matricula[POS_DOIS] != STRING_TRACO || matricula[POS_CINCO != STRING_TRACO]) return FALSE;
+
+    if ((eParValido(matricula[POS_NULA], matricula[POS_UM])) ||
+    (eParValido(matricula[POS_TRES], matricula[POS_QUATRO])) ||
+    (eParValido(matricula[POS_CINCO], matricula[POS_SEIS]))) return FALSE;
+
+    if (!((numeroDigitosMatricula == DOIS && numeroAlphasMatricula == QUATRO) ||
+    numeroDigitosMatricula == QUATRO && numeroAlphasMatricula == DOIS)) return FALSE;
+
+    if (numeroAlphasMatricula == QUATRO &&
+    !(isalpha(matricula[POS_NULA]) && isalpha(matricula[POS_UM]) &&
+    isalpha(matricula[POS_SEIS]) && isalpha(matricula[POS_SETE]))) return FALSE;
+
+    return TRUE;
+}
+
+Bool eParValido(char pos1, char pos2) {
+
+    return ((isdigit(pos1) && isdigit(pos2)) || (isalpha(pos1) && isalpha(pos2)));
+}
+
+Bool eDataValida(int dia, int mes, int ano, int horas, int minutos) {
+
+    if (ano < ANO_MIN) return FALSE;
+
+    if (dia < UM || dia > TRINTA_UM || mes < UM || mes > DOZE) return FALSE;
+
+    switch(mes) {
+
+        case 2:
+
+            if (dia > VINTE_OITO) return FALSE;
+        
+        break;
+
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+
+            if (dia > TRINTA) return FALSE;
+        
+        break;
+
+        if (horas < NULO || horas > VINTE_TRES || minutos < NULO || minutos > CINQUENTA_NOVE) return FALSE;
+    }
+
+    return TRUE;
+} 
+
+int devolveNumeroParquesSistema(Parque* primeiroParque) {
+
+    Parque* parqueAtual = primeiroParque;
+
+    int contador = 0;
+
+    while (parqueAtual != NULL) {
+
+        contador++;
+        parqueAtual = parqueAtual -> proxParque;
+    }
+
+    return contador;
+}
+
+int devolveNumeroDigitosVetor(char* matricula) {
+
+    int contador = 0;
+    int i = 0;
+
+    do {
+
+        if (isdigit(matricula[i])) contador ++;
+
+    } while (matricula[i] != STRING_NULA);
+
+    return contador;
+}
+
+int devolveNumeroAlphasVetor(char* matricula) {
+
+    int contador = 0;
+    int i = 0;
+
+    do {
+
+        if (isalpha(matricula[i])) contador ++;
+
+    } while (matricula[i] != STRING_NULA);
+
+    return contador;
+}
+
+
+Parque* parquesNoSistema;
+Entrada* entradasNoSistema;
+Saida* saidasNoSistema;
+
+
+void mostraParquesSistema() {
+
+    Parque* parqueAtual = parquesNoSistema;
+
+    while (parqueAtual != NULL) {
+
+        printf("%s %d %d\n",
+        parqueAtual -> parque.nome,
+        parqueAtual -> parque.capacidadeMax, 
+        parqueAtual -> parque.lugaresDisponiveis);
+
+        parqueAtual = parqueAtual -> proxParque;
+    }
+}
+
+void adicionaParque(char* nome, int capacidadeMax, float custo1, float custo2, float custo3) {
+
+    Parque* novoParque = (Parque*) malloc(sizeof(Parque));
+
+    strcpy(novoParque -> parque.nome, nome);
+    novoParque -> parque.capacidadeMax = capacidadeMax;
+    novoParque -> parque.lugaresDisponiveis = capacidadeMax; 
+    novoParque -> parque.custo1 = custo1;
+    novoParque -> parque.custo2 = custo2;
+    novoParque -> parque.custo3 = custo3;
+
+    novoParque -> proxParque = NULL;
+
+    if (parquesNoSistema == NULL) {
+
+        parquesNoSistema = novoParque;
+
+    } else {
+
+        Parque* atual = parquesNoSistema;
+
+        while (atual -> proxParque != NULL) {
+
+            atual = atual -> proxParque;
+        }
+        atual -> proxParque = novoParque;
+    }
+}
+
+Parque* devolveParqueCorrespondente(Parque* primeiroParque, char* nome) {
+
+    Parque* parqueAtual = primeiroParque;
+
+    while (parqueAtual != NULL) {
+
+        if (strcmp(parqueAtual -> parque.nome, nome) == STRCMP_TRUE) continue;
+
+        parqueAtual = parqueAtual -> proxParque;
+    }
+
+    return parqueAtual;
+}
+
+char comando; /* variavel local do script main.c */
+
+
+/*
+
+ * CORPO PRINCIPAL DO PROGRAMA
+
+*/
+
+int main() {
+
+    Parque* parquesNoSistema = (Parque*) malloc(sizeof(Parque));
+    Entrada* entradasNoSistema = (Entrada*) malloc(sizeof(Entrada));
+    Saida* saidasNoSistema = (Saida*) malloc(sizeof(Saida));
+
+    while (TRUE) {
+
+        comando = getchar();
+
+        switch (comando) {
+
+            case COMANDO_P:
+
+                parques();
+            
+            break;
+
+            case COMANDO_E:
+
+                entradas();
+
+            break;
+
+            case COMANDO_S:
+
+                saidas();
+            
+            break;
+
+            case COMANDO_V:
+            break;
+            case COMANDO_F:
+            break;
+            case COMANDO_R:
+            break;
+            case COMANDO_Q:
+
+                return EXIT_SUCCESS;
+        }
+    } 
+
+    return EXIT_FAILURE;
+}
+
+typedef struct {
+
+    int dia;
+    int mes;
+    int ano;
+
+} InfoData;
+
+typedef struct {
+
+    int hora;
+    int minutos;
+
+} InfoHoras;
+
+typedef struct {
+
+    char nome[STRING_PADRAO];
+    int capacidadeMax;
+    int lugaresDisponiveis;
+    float custo1;
+    float custo2;
+    float custo3;
+
+} InfoParque;
+
+typedef struct {
+
+    char nomeParque[STRING_PADRAO];
+    char matricula[STRING_PADRAO];
+    InfoData data;
+    InfoHoras horas;
+    
+} InfoEntrada;
+
+typedef struct {
+
+    char nomeParque[STRING_PADRAO];
+    char matricula[STRING_PADRAO];
+    InfoData data;
+    InfoHoras horas;
+
+} InfoSaida;
+
+typedef struct Parque {
+
+    InfoParque parque;
+    struct Parque* proxParque;
+
+} Parque;
+
+typedef struct Entrada {
+
+    InfoEntrada entrada;
+    struct Entrada* proxEntrada;
+
+} Entrada;
+
+typedef struct Saida {
+
+    InfoSaida saida;
+    struct Saida* proxSaida;
+
+} Saida;
+
+/*
+
+ * DECLARAÇÃO DE VARIAVEIS GLOBAIS
+
+*/
+
+extern Parque* parquesNoSistema;
+extern Entrada* entradasNoSistema;
+extern Saida* saidasNoSistema;
+
+
+/*
+
+ * PROTÓTIPOS DAS FUNÇÕES DAS ESTRUTURAS
+
+*/
+
+void mostraParquesSistema();
+void adicionaParque(char* nome, int capacidadeMax, float custo1, float custo2, float custo3);
+Parque* devolveParqueCorrespondente(Parque* primeiroParque, char* nome);
