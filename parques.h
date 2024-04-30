@@ -13,6 +13,9 @@
 
 */
 
+#ifndef PARQUES_H
+#define PARQUES_H
+
 typedef struct {
 
     char nome[STRING_PADRAO];
@@ -31,8 +34,26 @@ typedef struct Parque {
 
 } Parque;
 
+
+
+/*
+
+ * VARIAVEIS GLOBAIS
+
+*/
+
+extern Parque* parquesExistentes;
+
 /*
 
  * PROTÓTIPOS
 
 */
+
+void parques();
+void mostraParquesSistema();
+void adicionaParquesSistema(char* nome, int capacidadeMax, float custo1, float custo2, float custo3);
+
+int devolveNumeroParquesSistema(Parque* primeiroParque);
+
+#endif

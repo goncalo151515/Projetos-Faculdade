@@ -13,6 +13,9 @@
 
 */
 
+#ifndef ENTRADASAIDAS_H
+#define ENTRADASAIDAS_H
+
 typedef struct {
 
     int dia;
@@ -66,3 +69,5 @@ typedef struct Saida {
  * PROTÓTIPOS
 
 */
+
+#endif
